@@ -1,5 +1,24 @@
 .App {
+  text-align: center;
+  background-color: var(--tg-theme-bg-color, #282c34);
   min-height: 100vh;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  color: var(--tg-theme-text-color, #000000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-header {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--tg-theme-text-color, white);
+}
+
+h1 {
+  color: var(--tg-theme-link-color, #61dafb);
+  margin-bottom: 30px;
+  font-size: 2.5rem;
 } 

@@ -1,3 +1,43 @@
-.vpn-container {
-// ... весь код VPNControl.css
+.vpn-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.vpn-button {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, white);
+}
+
+.vpn-button.connected {
+  background-color: var(--tg-theme-button-color, #4CAF50);
+}
+
+.vpn-button.disconnected {
+  background-color: var(--tg-theme-button-color, #f44336);
+}
+
+.vpn-button.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.vpn-button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.status-text {
+  font-size: 1.1rem;
+  color: var(--tg-theme-text-color, #61dafb);
+}
 
