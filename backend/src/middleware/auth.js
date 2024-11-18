@@ -1,43 +1,37 @@
 const crypto = require('crypto');
 
-const authMiddleware = (req, res, next) => {
+function auth(req, res, next) {
   try {
-    const initData = req.headers['x-telegram-init-data'];
-    if (!initData) {
-      return res.status(401).json({ error: 'Unauthorized: No init data' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Отсутствует токен авторизации' });
     }
 
-    // Получаем данные и хэш
-    const urlParams = new URLSearchParams(initData);
-    const hash = urlParams.get('hash');
-    urlParams.delete('hash');
-
-    // Сортируем параметры
-    const params = Array.from(urlParams.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, value]) => `${key}=${value}`)
-      .join('\n');
-
-    // Проверяем подпись
-    const secret = crypto.createHmac('sha256', 'WebAppData')
-      .update(process.env.BOT_TOKEN)
-      .digest();
-
-    const checkHash = crypto.createHmac('sha256', secret)
-      .update(params)
-      .digest('hex');
-
-    if (checkHash !== hash) {
-      return res.status(401).json({ error: 'Unauthorized: Invalid hash' });
+    const token = authHeader.split(' ')[1];
+    const initData = decodeInitData(token);
+    
+    if (!initData || !initData.user) {
+      return res.status(401).json({ message: 'Недействительный токен' });
     }
 
-    // Добавляем данные пользователя в request
-    req.telegramUser = JSON.parse(urlParams.get('user'));
+    req.user = {
+      telegramId: initData.user.id,
+      username: initData.user.username
+    };
+
     next();
   } catch (error) {
     console.error('Auth error:', error);
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ message: 'Ошибка авторизации' });
   }
-};
+}
 
-module.exports = authMiddleware; 
+function decodeInitData(initData) {
+  // Здесь должна быть валидация initData от Telegram
+  // https://core.telegram.org/bots/webapps#validating-data-received-via-the-web-app
+  
+  const data = new URLSearchParams(initData);
+  return JSON.parse(data.get('user') || '{}');
+}
+
+module.exports = auth; 

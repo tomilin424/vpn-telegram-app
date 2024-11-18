@@ -1,38 +1,26 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const sequelize = require('./config/database');
-const apiRoutes = require('./routes/api');
-const referralRoutes = require('./routes/referral');
-const telegramService = require('./services/telegramService');
-const notificationService = require('./services/notificationService');
-const adminRoutes = require('./routes/admin');
+const vpnRoutes = require('./routes/vpn');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Настройка CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-// Routes
-app.use('/api', apiRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/referral', referralRoutes);
+// Маршруты
+app.use('/api/vpn', vpnRoutes);
 
-// Database sync
-sequelize.sync()
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch(err => {
-    console.error('Error syncing database:', err);
-  });
+// Обработка ошибок
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Что-то пошло не так!' });
+});
 
-// Start notification service
-notificationService.startDailyCheck();
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('BOT_TOKEN:', process.env.BOT_TOKEN);
-}); 
+module.exports = app; 

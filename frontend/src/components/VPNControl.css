@@ -41,3 +41,11 @@
   color: var(--tg-theme-text-color, #61dafb);
 }
 
+.error-text {
+  color: #f44336;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-align: center;
+  max-width: 80%;
+}
+
