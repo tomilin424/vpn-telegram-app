@@ -1,0 +1,26 @@
+.App {
+  min-height: 100vh;
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+.page-container {
+  padding: 60px 0 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--tg-theme-hint-color);
+}
+
+.error {
+  color: #f44336;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 8px;
+  text-align: center;
+} 

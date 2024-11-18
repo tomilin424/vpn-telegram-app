@@ -1,0 +1,31 @@
+.faq {
+  padding: 20px;
+  background-color: var(--tg-theme-secondary-bg-color);
+  border-radius: 12px;
+  margin: 20px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-item {
+  background-color: var(--tg-theme-bg-color);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.faq-item h3 {
+  color: var(--tg-theme-text-color);
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.faq-item p {
+  color: var(--tg-theme-hint-color);
+  margin: 0;
+  white-space: pre-line;
+  font-size: 14px;
+} 

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>ZeusVPN</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #4a90e2 0%, #2c3e50 100%);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .brand-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #4a90e2 0%, #2c3e50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .status-card {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            background-color: var(--tg-theme-secondary-bg-color);
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .status-active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-inactive {
+            background-color: #f44336;
+            color: white;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .subscription-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--tg-theme-hint-color);
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--tg-theme-text-color);
+        }
+        .features {
+            text-align: left;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+        .features li {
+            margin: 10px 0;
+            list-style-type: none;
+            padding-left: 25px;
+            position: relative;
+        }
+        .features li:before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            color: #4a90e2;
+        }
+        .server-select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⚡</div>
+        <h1 class="brand-name">ZeusVPN</h1>
+        
+        <div class="status-card">
+            <h2>Статус VPN</h2>
+            <div id="statusIndicator" class="status-indicator status-inactive">Отключено</div>
+            <div id="subscriptionInfo" class="subscription-info">
+                Подписка не активна
+            </div>
+            <select id="serverSelect" class="server-select" disabled>
+                <option value="auto">Автоматический выбор сервера</option>
+                <option value="ru">Россия 🇷🇺</option>
+                <option value="eu">Европа 🇪🇺</option>
+                <option value="us">США 🇺🇸</option>
+                <option value="asia">Азия 🌏</option>
+            </select>
+        </div>
+
+        <div class="status-card">
+            <h2>Подписка</h2>
+            <div class="price">250₽/месяц</div>
+            <ul class="features">
+                <li>Безлимитный трафик</li>
+                <li>Скорость до 1 Гбит/с</li>
+                <li>Доступ ко всем серверам</li>
+                <li>Поддержка 24/7</li>
+                <li>Защита от блокировок</li>
+                <li>Без логирования</li>
+            </ul>
+            <button class="button" onclick="handleSubscribe()">Подписаться</button>
+        </div>
+
+        <button id="connectButton" class="button" onclick="handleConnect()" disabled>
+            Подключиться к ZeusVPN
+        </button>
+
+        <div class="status-card">
+            <h2>Способы оплаты</h2>
+            <button class="button" onclick="handleCardPayment()">💳 Оплатить картой</button>
+            <button class="button" onclick="handleCryptoPayment()">🪙 Оплатить в крипте</button>
+        </div>
+    </div>
+
+    <script>
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+
+        let isSubscribed = false;
+        let isConnected = false;
+
+        function updateStatus() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectButton = document.getElementById('connectButton');
+            const subscriptionInfo = document.getElementById('subscriptionInfo');
+            const serverSelect = document.getElementById('serverSelect');
+
+            if (isSubscribed) {
+                connectButton.disabled = false;
+                serverSelect.disabled = false;
+                subscriptionInfo.textContent = 'Подписка активна до: 16.12.2023';
+            }
+
+            if (isConnected) {
+                statusIndicator.className = 'status-indicator status-active';
+                statusIndicator.textContent = 'Подключено';
+                connectButton.textContent = 'Отключиться';
+                serverSelect.disabled = true;
+            } else {
+                statusIndicator.className = 'status-indicator status-inactive';
+                statusIndicator.textContent = 'Отключено';
+                connectButton.textContent = 'Подключиться к ZeusVPN';
+                serverSelect.disabled = !isSubscribed;
+            }
+        }
+
+        function handleSubscribe() {
+            window.Telegram.WebApp.showPopup({
+                title: 'Подписка на ZeusVPN',
+                message: 'Стоимость подписки 250₽ в месяц. Продолжить?',
+                buttons: [
+                    {text: 'Да', type: 'ok'},
+                    {text: 'Отмена', type: 'cancel'}
+                ]
+            }, function(button) {
+                if (button === 'ok') {
+                    showPaymentMethods();
+                }
+            });
+        }
+
+        function showPaymentMethods() {
+            window.Telegram.WebApp.showPopup({
+                title: 'Выберите способ оплаты',
+                message: 'Как вы хотите оплатить подписку?',
+                buttons: [
+                    {text: 'Картой', type: 'default', id: 'card'},
+                    {text: 'Криптовалютой', type: 'default', id: 'crypto'},
+                    {text: 'Отмена', type: 'cancel'}
+                ]
+            }, function(buttonId) {
+                if (buttonId === 'card') {
+                    handleCardPayment();
+                } else if (buttonId === 'crypto') {
+                    handleCryptoPayment();
+                }
+            });
+        }
+
+        function handleConnect() {
+            const server = document.getElementById('serverSelect').value;
+            isConnected = !isConnected;
+            updateStatus();
+            window.Telegram.WebApp.showAlert(
+                isConnected 
+                    ? `VPN успешно подключен! Сервер: ${server}` 
+                    : 'VPN отключен'
+            );
+        }
+
+        function handleCardPayment() {
+            window.Telegram.WebApp.showAlert('Переход к оплате картой...');
+            // Здесь будет интеграция с платежной системой
+        }
+
+        function handleCryptoPayment() {
+            window.Telegram.WebApp.showAlert('Переход к оплате в криптовалюте...');
+            // Здесь будет интеграция с криптоплатежами
+        }
+
+        // Проверяем статус при загрузке
+        updateStatus();
+
+        // Обработчик изменения сервера
+        document.getElementById('serverSelect').addEventListener('change', function(e) {
+            if (isConnected) {
+                window.Telegram.WebApp.showPopup({
+                    title: 'Смена сервера',
+                    message: 'Для смены сервера необходимо переподключиться. Продолжить?',
+                    buttons: [
+                        {text: 'Да', type: 'ok'},
+                        {text: 'Отмена', type: 'cancel'}
+                    ]
+                }, function(button) {
+                    if (button === 'ok') {
+                        isConnected = false;
+                        updateStatus();
+                        handleConnect();
+                    } else {
+                        e.target.value = e.target.getAttribute('data-last-value');
+                    }
+                });
+            }
+            e.target.setAttribute('data-last-value', e.target.value);
+        });
+    </script>
+</body>
+</html> 

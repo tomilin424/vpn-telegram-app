@@ -1,0 +1,38 @@
+.vpn-status {
+  padding: 20px;
+  background-color: var(--tg-theme-secondary-bg-color);
+  border-radius: 12px;
+  margin: 20px;
+}
+
+.status-indicator {
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.status-indicator.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status-indicator.inactive {
+  background-color: #f44336;
+  color: white;
+}
+
+.subscription-info {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--tg-theme-hint-color);
+} 
