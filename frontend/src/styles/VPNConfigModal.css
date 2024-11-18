@@ -1,0 +1,63 @@
+.vpn-config-modal {
+  background-color: var(--tg-theme-secondary-bg-color);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.vpn-config-modal h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: var(--tg-theme-text-color);
+}
+
+.config-text {
+  background-color: var(--tg-theme-bg-color);
+  padding: 16px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--tg-theme-text-color);
+  overflow-x: auto;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.config-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.config-button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.config-button.copy {
+  background: linear-gradient(45deg, #2196F3, #00BCD4);
+  color: white;
+}
+
+.config-button.download {
+  background: linear-gradient(45deg, #4CAF50, #8BC34A);
+  color: white;
+}
+
+.config-button.close {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+
+.config-button:active {
+  transform: translateY(2px);
+  opacity: 0.9;
+} 

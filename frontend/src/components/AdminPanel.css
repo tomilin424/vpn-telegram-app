@@ -1,0 +1,82 @@
+.admin-panel {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background-color: var(--tg-theme-secondary-bg-color);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2em;
+  font-weight: bold;
+  color: var(--tg-theme-button-color);
+  margin: 10px 0;
+}
+
+.stat-label {
+  color: var(--tg-theme-hint-color);
+}
+
+.recent-payments {
+  background-color: var(--tg-theme-secondary-bg-color);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 8px;
+  gap: 15px;
+}
+
+.payment-amount {
+  font-weight: bold;
+}
+
+.payment-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.payment-status[data-status="completed"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.payment-status[data-status="pending"] {
+  background-color: #FFC107;
+  color: black;
+}
+
+.payment-status[data-status="rejected"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.payment-date {
+  color: var(--tg-theme-hint-color);
+  font-size: 0.9em;
+} 
