@@ -6,7 +6,7 @@ function VPNControl() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_URL = 'https://195.211.124.224:3001/api'; // Обновленный URL бэкенда
+  const API_URL = 'http://195.211.124.224:3001/api';
 
   useEffect(() => {
     checkVPNStatus();
