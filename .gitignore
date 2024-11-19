@@ -1,38 +1,33 @@
-# dependencies
-node_modules
-/.pnp
-.pnp.js
+# Dependencies
+node_modules/
 
-# testing
-/coverage
-
-# production
-/build
-/frontend/build
-/backend/build
-
-# misc
-.DS_Store
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
-backend/.env
-backend/.env.production
+.env.*.local
 
+# Logs
+*.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Database
-backend/src/database.sqlite
-
-# IDE
-.idea
-.vscode
-.vercel
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # Certificates
-backend/certs/*.cert
-backend/certs/*.txt
+certs/
+*.pem
+*.key
+*.crt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
