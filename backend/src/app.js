@@ -2,25 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const vpnRoutes = require('./routes/vpn');
+const telegramService = require('./services/telegramService');
 
 const app = express();
+const port = process.env.PORT || 3002;
 
-// Настройка CORS
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+app.use(cors());
 app.use(express.json());
 
-// Маршруты
+// Подключаем маршруты
 app.use('/api/vpn', vpnRoutes);
 
-// Обработка ошибок
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Что-то пошло не так!' });
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log('Telegram bot is active');
 });
 
 module.exports = app; 

@@ -32,3 +32,7 @@ backend/src/database.sqlite
 .idea
 .vscode
 .vercel
+
+# Certificates
+backend/certs/*.cert
+backend/certs/*.txt

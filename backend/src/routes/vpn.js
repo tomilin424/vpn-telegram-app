@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const vpnController = require('../controllers/vpnController');
-const auth = require('../middleware/auth');
+const { createVpnKey, deleteVpnKey, getAllKeys } = require('../controllers/vpnController');
 
-router.get('/status', auth, vpnController.getStatus);
-router.post('/connect', auth, vpnController.connect);
-router.post('/disconnect', auth, vpnController.disconnect);
+// Определяем маршруты с функциями-обработчиками
+router.get('/keys', getAllKeys);
+router.post('/keys', createVpnKey);
+router.delete('/keys/:keyId', deleteVpnKey);
 
 module.exports = router; 

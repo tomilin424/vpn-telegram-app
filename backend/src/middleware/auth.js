@@ -8,30 +8,39 @@ function auth(req, res, next) {
     }
 
     const token = authHeader.split(' ')[1];
-    const initData = decodeInitData(token);
-    
-    if (!initData || !initData.user) {
-      return res.status(401).json({ message: 'Недействительный токен' });
+    console.log('Received token:', token); // Для отладки
+
+    // Извлекаем параметры из initData
+    const params = new URLSearchParams(token);
+    const userDataStr = params.get('user');
+    console.log('User data string:', userDataStr); // Для отладки
+
+    if (!userDataStr) {
+      return res.status(401).json({ message: 'Отсутствуют данные пользователя' });
     }
 
-    req.user = {
-      telegramId: initData.user.id,
-      username: initData.user.username
-    };
+    try {
+      const userData = JSON.parse(decodeURIComponent(userDataStr));
+      console.log('Parsed user data:', userData); // Для отладки
 
-    next();
+      if (!userData.id) {
+        return res.status(401).json({ message: 'Отсутствует ID пользователя' });
+      }
+
+      req.user = {
+        telegramId: userData.id,
+        username: userData.username
+      };
+
+      next();
+    } catch (parseError) {
+      console.error('Parse error:', parseError);
+      return res.status(401).json({ message: 'Ошибка при разборе данных пользователя' });
+    }
   } catch (error) {
     console.error('Auth error:', error);
     res.status(401).json({ message: 'Ошибка авторизации' });
   }
-}
-
-function decodeInitData(initData) {
-  // Здесь должна быть валидация initData от Telegram
-  // https://core.telegram.org/bots/webapps#validating-data-received-via-the-web-app
-  
-  const data = new URLSearchParams(initData);
-  return JSON.parse(data.get('user') || '{}');
 }
 
 module.exports = auth; 

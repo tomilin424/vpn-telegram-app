@@ -1,23 +1,30 @@
-import React, { useEffect } from 'react';
-import './App.css';
-import VPNControl from './components/VPNControl';
+import React from 'react';
+import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import VPNKeysList from './components/VPNKeysList';
+import CreateKeyForm from './components/CreateKeyForm';
+
+const theme = createTheme({
+    palette: {
+        mode: 'light',
+    },
+});
 
 function App() {
-  useEffect(() => {
-    // Инициализация Telegram WebApp
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-  }, []);
+    const [refreshKeys, setRefreshKeys] = React.useState(0);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>ZeusVPN</h1>
-        <VPNControl />
-      </header>
-    </div>
-  );
+    const handleKeyCreated = () => {
+        setRefreshKeys(prev => prev + 1);
+    };
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Container>
+                <CreateKeyForm onKeyCreated={handleKeyCreated} />
+                <VPNKeysList key={refreshKeys} />
+            </Container>
+        </ThemeProvider>
+    );
 }
 
 export default App;

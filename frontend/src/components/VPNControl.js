@@ -15,11 +15,17 @@ function VPNControl() {
   const checkVPNStatus = async () => {
     try {
       const tg = window.Telegram.WebApp;
+      const userData = {
+        id: tg.initDataUnsafe.user.id,
+        username: tg.initDataUnsafe.user.username
+      };
+      const initData = `user=${encodeURIComponent(JSON.stringify(userData))}`;
+      
       const response = await fetch(`${API_URL}/vpn/status`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tg.initData}`
+          'Authorization': `Bearer initData=${initData}`
         }
       });
       const data = await response.json();

@@ -1,87 +1,39 @@
-const VPNService = require('../services/vpnService');
-const User = require('../models/User');
+const outlineService = require('../services/outlineService');
 
-class VPNController {
-  async connect(req, res) {
+const getAllKeys = async (req, res) => {
     try {
-      const { telegramId } = req.user;
-      
-      // Проверяем активную подписку
-      const user = await User.findOne({ telegramId });
-      if (!user || !user.subscription_active) {
-        return res.status(403).json({ 
-          message: 'Для подключения VPN требуется активная подписка' 
-        });
-      }
-
-      // Генерируем конфигурацию VPN
-      const vpnConfig = await VPNService.setupVPNConnection(telegramId);
-
-      // Сохраняем информацию о подключении
-      await User.updateOne(
-        { telegramId },
-        { vpn_connected: true, vpn_config: vpnConfig }
-      );
-
-      res.json({
-        success: true,
-        config: vpnConfig.config,
-        connectionDetails: vpnConfig.connectionDetails
-      });
+        const keys = await outlineService.getAllKeys();
+        res.json(keys);
     } catch (error) {
-      console.error('Ошибка при подключении VPN:', error);
-      res.status(500).json({ message: 'Ошибка при подключении VPN' });
+        console.error('Error getting keys:', error);
+        res.status(500).json({ error: 'Failed to get VPN keys' });
     }
-  }
+};
 
-  async disconnect(req, res) {
+const createVpnKey = async (req, res) => {
     try {
-      const { telegramId } = req.user;
-      
-      // Отключаем VPN
-      await VPNService.removeVPNConnection(telegramId);
-
-      // Обновляем статус в базе
-      await User.updateOne(
-        { telegramId },
-        { vpn_connected: false, vpn_config: null }
-      );
-
-      res.json({ success: true });
+        const { name } = req.body;
+        const newKey = await outlineService.createKey(name);
+        res.json(newKey);
     } catch (error) {
-      console.error('Ошибка при отключении VPN:', error);
-      res.status(500).json({ message: 'Ошибка при отключении VPN' });
+        console.error('Error creating key:', error);
+        res.status(500).json({ error: 'Failed to create VPN key' });
     }
-  }
+};
 
-  async status(req, res) {
+const deleteVpnKey = async (req, res) => {
     try {
-      const { telegramId } = req.user;
-      const user = await User.findOne({ telegramId });
-
-      if (!user) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
-      }
-
-      res.json({
-        isConnected: user.vpn_connected || false,
-        config: user.vpn_config
-      });
+        const { keyId } = req.params;
+        await outlineService.deleteKey(keyId);
+        res.json({ message: 'Key deleted successfully' });
     } catch (error) {
-      console.error('Ошибка при получении статуса VPN:', error);
-      res.status(500).json({ message: 'Ошибка при получении статуса VPN' });
+        console.error('Error deleting key:', error);
+        res.status(500).json({ error: 'Failed to delete VPN key' });
     }
-  }
+};
 
-  async getServers(req, res) {
-    try {
-      const servers = await VPNService.getAvailableServers();
-      res.json(servers);
-    } catch (error) {
-      console.error('Ошибка при получении списка серверов:', error);
-      res.status(500).json({ message: 'Ошибка при получении списка серверов' });
-    }
-  }
-}
-
-module.exports = new VPNController(); 
+module.exports = {
+    getAllKeys,
+    createVpnKey,
+    deleteVpnKey
+}; 
