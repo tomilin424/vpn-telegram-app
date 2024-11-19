@@ -1,21 +1,22 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const vpnRoutes = require('./routes/vpn');
+const { setupSecurity, checkIP } = require('./middleware/security');
 const telegramService = require('./services/telegramService');
 
 const app = express();
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 3003;
 
-app.use(cors());
+// Применяем защиту
+setupSecurity(app);
+
 app.use(express.json());
 
-// Подключаем маршруты
-app.use('/api/vpn', vpnRoutes);
+// Защита API endpoints
+app.use('/api', checkIP);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-    console.log('Telegram bot is active');
+    console.log('Telegram bot is active with security measures');
 });
 
 module.exports = app; 

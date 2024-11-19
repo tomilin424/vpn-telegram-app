@@ -1,37 +1,69 @@
 const TelegramBot = require('node-telegram-bot-api');
+const { telegramAntiSpam } = require('../middleware/security');
 const outlineService = require('./outlineService');
 
 class TelegramService {
     constructor() {
         this.bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
         this.adminChatId = process.env.ADMIN_CHAT_ID;
+        this.blockedUsers = new Set();
         this.setupCommands();
+    }
+
+    async handleMessage(msg, handler) {
+        const chatId = msg.chat.id;
+        
+        // Проверка на спам
+        if (telegramAntiSpam(chatId)) {
+            if (!this.blockedUsers.has(chatId)) {
+                await this.bot.sendMessage(chatId, 
+                    '⚠️ Обнаружен спам. Пожалуйста, подождите несколько минут.'
+                );
+                this.blockedUsers.add(chatId);
+                setTimeout(() => this.blockedUsers.delete(chatId), 5 * 60 * 1000); // 5 минут блокировки
+            }
+            return;
+        }
+
+        // Логирование
+        console.log(`Received message from ${chatId}: ${msg.text}`);
+        
+        try {
+            await handler();
+        } catch (error) {
+            console.error(`Error handling message from ${chatId}:`, error);
+            await this.bot.sendMessage(chatId, 
+                '❌ Произошла ошибка. Пожалуйста, попробуйте позже.'
+            );
+        }
     }
 
     setupCommands() {
         // Команда start для всех пользователей
         this.bot.onText(/\/start/, async (msg) => {
-            const chatId = msg.chat.id;
-            
-            const keyboard = {
-                inline_keyboard: [
-                    [{ text: '💫 Купить ZeusVPN - 100₽/месяц', callback_data: 'buy_vpn' }],
-                    [{ text: '📗 Инструкция по установке', callback_data: 'installation_guide' }],
-                    [{ text: '🗂 Мои ключи', callback_data: 'mykeys' }]
-                ]
-            };
-            
-            await this.bot.sendMessage(chatId, 
-                '⚡️ Добро пожаловать в ZeusVPN!\n\n' +
-                '🌟 Что умеет наш VPN:\n' +
-                '🚀 Быстрый и надежный VPN-доступ\n' +
-                '📱 Работает на всех устройствах\n' +
-                '♾ Безлимитный трафик\n' +
-                '⚡️ Высокая скорость\n\n' +
-                '💎 Стоимость: всего 100₽ в месяц\n\n' +
-                '🌿 Нажмите "Купить ZeusVPN" для оформления подписки',
-                { reply_markup: keyboard }
-            );
+            await this.handleMessage(msg, async () => {
+                const chatId = msg.chat.id;
+                
+                const keyboard = {
+                    inline_keyboard: [
+                        [{ text: '💫 Купить ZeusVPN - 100₽/месяц', callback_data: 'buy_vpn' }],
+                        [{ text: '📗 Инструкция по установке', callback_data: 'installation_guide' }],
+                        [{ text: '🗂 Мои ключи', callback_data: 'mykeys' }]
+                    ]
+                };
+                
+                await this.bot.sendMessage(chatId, 
+                    '⚡️ Добро пожаловать в ZeusVPN!\n\n' +
+                    '🌟 Что умеет наш VPN:\n' +
+                    '🚀 Быстрый и надежный VPN-доступ\n' +
+                    '📱 Работает на всех устройствах\n' +
+                    '♾ Безлимитный трафик\n' +
+                    '⚡️ Высокая скорость\n\n' +
+                    '💎 Стоимость: всего 100₽ в месяц\n\n' +
+                    '🌿 Нажмите "Купить ZeusVPN" для оформления подписки',
+                    { reply_markup: keyboard }
+                );
+            });
         });
 
         // Обработка нажатий на кнопки
@@ -163,7 +195,7 @@ class TelegramService {
                       'https://raw.githubusercontent.com/Jigsaw-Code/outline-releases/master/client/stable/Outline-Client.exe\n\n' +
                       '2. Установите приложение\n' +
                       '3. После установки нажмите кнопку "Получить ключ" ниже\n' +
-                      '4. Скопируйте полученный ключ\n' +
+                      '4. Скопир��йте полученный ключ\n' +
                       '5. Откройте Outline и вставьте ключ\n' +
                       '6. Нажмите "Подключиться"'
             },
@@ -332,7 +364,7 @@ class TelegramService {
                 '• Платеж еще не поступил\n' +
                 '• В комментарии не указан ID\n' +
                 '• Неверная сумма перевода\n\n' +
-                'Попробуйте проверить позже или свяжитесь с поддержкой';
+                'Попробуйте про��ерить позже или свяжитесь с поддержкой';
 
             await this.bot.editMessageText(errorMessage, {
                 chat_id: chatId,
