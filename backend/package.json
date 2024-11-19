@@ -1,34 +1,17 @@
 {
-  "name": "vpn-telegram-backend",
+  "name": "zeusvpn-telegram-bot",
   "version": "1.0.0",
-  "description": "Backend for ZeusVPN Telegram Mini App",
-  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "migrate": "sequelize-cli db:migrate",
-    "migrate:undo": "sequelize-cli db:migrate:undo",
-    "seed": "sequelize-cli db:seed:all",
-    "seed:undo": "sequelize-cli db:seed:undo:all"
+    "dev": "nodemon src/app.js"
   },
   "dependencies": {
-    "@binance/connector": "^3.5.0",
-    "axios": "^1.7.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "https": "^1.0.0",
-    "node-cache": "^5.1.2",
-    "node-telegram-bot-api": "^0.66.0",
-    "pg": "^8.13.1",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.5",
-    "stripe": "^17.3.1",
-    "telegraf": "^4.16.3",
-    "winston": "^3.17.0"
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-telegram-bot-api": "^0.64.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22",
-    "sequelize-cli": "^6.6.2"
+    "nodemon": "^3.0.1"
   }
 }
